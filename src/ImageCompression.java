@@ -8,7 +8,7 @@ import java.util.Base64;
 
 public class ImageCompression {
     public static void main(String[] args) throws IOException {
-        BufferedImage bufferimage = ImageIO.read(new File("/Users/albertooshiro/Library/Mobile Documents/com~apple~CloudDocs/Coding/Projects/ImageCompression/src/test.jpg"));
+        BufferedImage bufferimage = ImageIO.read(new File("test.jpg"));
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         ImageIO.write(bufferimage, "jpg", output );
         byte [] data = output.toByteArray();
