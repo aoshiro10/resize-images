@@ -46,7 +46,7 @@ public class Bitmap {
     Bottom left to Top Corner
      */
     public Pixel getPixel(int row, int col) {
-        int index = pixelDataOffset + row * bytesPerRow + col;
+        int index = getPixelIndex(row, col);
         byte blue = this.data[index];
         byte green = this.data[index+1];
         byte red = this.data[index+2];
@@ -55,10 +55,15 @@ public class Bitmap {
 
     public void setPixel(Pixel pixel, int row, int col) {
         System.out.println(pixel);
-        int index = pixelDataOffset + row * bytesPerRow + col;
+        int index = getPixelIndex(row, col);
         this.data[index] = pixel.blue;
         this.data[index + 1] = pixel.green;
         this.data[index + 2] = pixel.red;
+    }
+
+    private int getPixelIndex(int row, int col) {
+        return pixelDataOffset + row * bytesPerRow + col * BYTES_PER_PIXEL;
+
     }
 
     private int getIntValue(int offset) {

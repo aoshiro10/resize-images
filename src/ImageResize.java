@@ -22,9 +22,15 @@ public class ImageResize {
         bitmap.setPixel(pixel1, 0, 0);
         Pixel pixel3 = bitmap.getPixel(0, 0);
         System.out.println("pixel3" + pixel3);
+        bitmap.setPixel(pixel1, 2, 5);
+
+
         InputStream in = new ByteArrayInputStream(bitmap.data);
         BufferedImage bImageFromConvert = ImageIO.read(in);
 
+
+
+        //bitmap.setPixel(pixel1, 2, 3);
 
         ImageIO.write(bImageFromConvert, "BMP", new File(
                 "test1.bmp"));
