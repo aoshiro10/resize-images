@@ -1,9 +1,6 @@
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.Base64;
 
 public class ImageResize {
     public static void main(String[] args) throws IOException {
@@ -16,10 +13,18 @@ public class ImageResize {
 
         Bitmap bitmap = new Bitmap(bmpBytes);
 
+        Pixel pixel1 = bitmap.getPixel(0, 0);
+        System.out.println(pixel1);
         bitmap.removeColor();
+        Pixel pixel2 = bitmap.getPixel(0, 0);
+        System.out.println(pixel2);
 
+        bitmap.setPixel(pixel1, 0, 0);
+        Pixel pixel3 = bitmap.getPixel(0, 0);
+        System.out.println("pixel3" + pixel3);
         InputStream in = new ByteArrayInputStream(bitmap.data);
         BufferedImage bImageFromConvert = ImageIO.read(in);
+
 
         ImageIO.write(bImageFromConvert, "BMP", new File(
                 "test1.bmp"));
