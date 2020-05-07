@@ -4,8 +4,8 @@ import java.util.Arrays;
 
 public class Bitmap {
 
-    final int BYTES_PER_PIXEL = 3;
-    final int LINE_PADDING = 4;
+    final static int BYTES_PER_PIXEL = 3;
+    final static int LINE_PADDING = 4;
 
     byte[] data;
 
@@ -20,8 +20,65 @@ public class Bitmap {
     short bpp;
 
 
-    public Bitmap(ByteArrayOutputStream bmpBytes) {
-        this.data = bmpBytes.toByteArray();
+    public static Bitmap emptyBitmap(int width, int height) {
+        int headerSize = 14;
+        int infoHeaderSize = 40;
+        int endPadding = mod(LINE_PADDING - mod(width * BYTES_PER_PIXEL, LINE_PADDING), LINE_PADDING);
+        int rowSize = width * BYTES_PER_PIXEL + endPadding;
+        int pixelDataSize = rowSize * height;
+        byte[] data = new byte[headerSize+infoHeaderSize+pixelDataSize];
+
+        buildHeader(data, headerSize+infoHeaderSize);
+        buildInfoHeader(data, width, height);
+
+        return new Bitmap(data);
+    }
+
+    private static byte[] intToBytes(int v) {
+        return ByteBuffer.allocate(4).putInt(v).array();
+    }
+
+    private static void buildInfoHeader(byte[] data, int width, int height) {
+        // Size
+        data[14] = 0x28;
+
+        // Width
+        byte[] widthBytes = intToBytes(width);
+        reverseArray(widthBytes);
+        System.arraycopy(widthBytes, 0, data, 18, 4);
+
+        // Height
+        byte[] heightBytes = intToBytes(height);
+        reverseArray(heightBytes);
+        System.arraycopy(heightBytes, 0, data, 22, 4);
+
+        // Planes
+        data[26] = 0x01;
+
+        // Bits Per Pixel
+        data[28] = 0x18;
+
+    }
+
+    private static void buildHeader(byte[] data, int dataOffset) {
+        // Signature
+        data[0] = 'B';
+        data[1] = 'M';
+
+        // FileSize
+        byte[] fileSizeBytes = intToBytes(data.length);
+        reverseArray(fileSizeBytes);
+        System.arraycopy(fileSizeBytes, 0, data, 2, 4);
+
+        // Data Offset
+        byte[] dataOffsetBytes = intToBytes(dataOffset);
+        reverseArray(dataOffsetBytes);
+        System.arraycopy(dataOffsetBytes, 0, data, 10, 4);
+    }
+
+
+    public Bitmap(byte[] data) {
+        this.data = data;
         this.width = getIntValue(18);
         this.height = getIntValue(22);
         this.size = getIntValue(2);
@@ -30,6 +87,8 @@ public class Bitmap {
 
         int endPadding = mod(LINE_PADDING - mod(width * BYTES_PER_PIXEL, LINE_PADDING), LINE_PADDING);
         this.bytesPerRow = width * BYTES_PER_PIXEL + endPadding;
+
+        System.out.println("Data size: " + ((this.data.length - this.pixelDataOffset)/(width+endPadding)));
     }
 
     public void removeColor() {
@@ -38,7 +97,17 @@ public class Bitmap {
         }
     }
 
-    private int mod(int n, int d) {
+    public void removeBlue() {
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                Pixel tempPixel = getPixel(row, col);
+                tempPixel.blue = 0;
+                setPixel(tempPixel, row, col);
+            }
+        }
+    }
+
+    private static int mod(int n, int d) {
         return ((n % d) + d) % d;
     }
 
@@ -54,8 +123,10 @@ public class Bitmap {
     }
 
     public void setPixel(Pixel pixel, int row, int col) {
-        System.out.println(pixel);
         int index = getPixelIndex(row, col);
+
+        System.out.println("index: " + index);
+
         this.data[index] = pixel.blue;
         this.data[index + 1] = pixel.green;
         this.data[index + 2] = pixel.red;
@@ -78,7 +149,7 @@ public class Bitmap {
         return ByteBuffer.wrap(bytes).getShort();
     }
 
-    private void reverseArray(byte[] bytes) {
+    private static void reverseArray(byte[] bytes) {
         for (int i = 0; i < bytes.length / 2; i++) {
             int iVerse = bytes.length - i - 1;
             byte temp = bytes[iVerse];

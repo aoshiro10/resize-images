@@ -1,6 +1,7 @@
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Arrays;
 
 public class ImageResize {
     public static void main(String[] args) throws IOException {
@@ -11,21 +12,19 @@ public class ImageResize {
         ByteArrayOutputStream bmpBytes = new ByteArrayOutputStream();
         ImageIO.write(jpgImage, "BMP", bmpBytes);
 
-        Bitmap bitmap = new Bitmap(bmpBytes);
+        Bitmap bitmap = new Bitmap(bmpBytes.toByteArray());
 
-        Pixel pixel1 = bitmap.getPixel(0, 0);
-        System.out.println(pixel1);
-        bitmap.removeColor();
-        Pixel pixel2 = bitmap.getPixel(0, 0);
-        System.out.println(pixel2);
-
-        bitmap.setPixel(pixel1, 0, 0);
-        Pixel pixel3 = bitmap.getPixel(0, 0);
-        System.out.println("pixel3" + pixel3);
-        bitmap.setPixel(pixel1, 2, 5);
+        Bitmap tempBitmap = Bitmap.emptyBitmap(100, 100);
 
 
-        InputStream in = new ByteArrayInputStream(bitmap.data);
+//        for (int i = 0; i < 54; i++) {
+//            System.out.println("index: " + i);
+//            System.out.println("old: " + bitmap.data[i]);
+//            System.out.println("new: " + tempBitmap.data[i]);
+//        }
+
+
+        InputStream in = new ByteArrayInputStream(tempBitmap.data);
         BufferedImage bImageFromConvert = ImageIO.read(in);
 
 
@@ -37,24 +36,7 @@ public class ImageResize {
         System.out.println("saved");
 
 
-//        System.out.println(ByteBuffer.wrap(pixelsPerRowBytes).getInt());
 
 
-//        ByteArrayOutputStream output = new ByteArrayOutputStream();
-//        ImageIO.write(bufferimage, "jpg", output );
-//        byte [] data = output.toByteArray();
-//
-//
-//
-//        data[1000] = data[1];
-//        data[1004] = data[1];
-//
-//        String base64 = new String(data);
-//        ByteArrayInputStream bis = new ByteArrayInputStream(data);
-//        BufferedImage bImage2 = ImageIO.read(bis);
-//        ImageIO.write(bImage2, "jpg", new File("output.jpg") );
-//        System.out.println("image created");
-//        System.out.println(base64.length());
-////        System.out.println(base64);
     }
 }
