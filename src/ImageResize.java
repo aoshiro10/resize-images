@@ -31,12 +31,10 @@ public class ImageResize {
 
         //bitmap.setPixel(pixel1, 2, 3);
 
-        ImageIO.write(bImageFromConvert, "BMP", new File(
-                "test1.bmp"));
+        ImageIO.write(bImageFromConvert, "JPG", new File(
+                "test1.jpg"));
         System.out.println("saved");
-
-
-
+        
 
     }
 }
