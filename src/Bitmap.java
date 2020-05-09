@@ -10,7 +10,6 @@ public class Bitmap {
     byte[] data;
 
     int bytesPerRow;
-
     int pixelDataOffset;
     // in pixels
     int width;
@@ -19,27 +18,9 @@ public class Bitmap {
     int size;
     short bpp;
 
-
-    public static Bitmap emptyBitmap(int width, int height) {
-        int headerSize = 14;
-        int infoHeaderSize = 40;
-        int endPadding = mod(LINE_PADDING - mod(width * BYTES_PER_PIXEL, LINE_PADDING), LINE_PADDING);
-        int rowSize = width * BYTES_PER_PIXEL + endPadding;
-        int pixelDataSize = rowSize * height;
-        byte[] data = new byte[headerSize+infoHeaderSize+pixelDataSize];
-
-        buildHeader(data, headerSize+infoHeaderSize);
-        buildInfoHeader(data, width, height);
-
-        return new Bitmap(data);
-    }
-
-
-
-
     public Bitmap resize(int newWidth, int newHeight) {
 
-        Bitmap tempBitmap = Bitmap.emptyBitmap(newWidth, this.height);
+        Bitmap tempBitmap = new Bitmap(newWidth, this.height);
         float dWidth = ((float) this.width)/newWidth;
 
         for (int row = 0; row < this.height; row++) {
@@ -50,7 +31,7 @@ public class Bitmap {
             }
         }
 
-        Bitmap finalBitmap = Bitmap.emptyBitmap(newWidth, newHeight);
+        Bitmap finalBitmap = new Bitmap(newWidth, newHeight);
 
         float dHeight = ((float) this.height)/newHeight;
 
@@ -121,6 +102,25 @@ public class Bitmap {
 
     }
 
+    public Bitmap(int width, int height) {
+        int headerSize = 14;
+        int infoHeaderSize = 40;
+        int endPadding = mod(LINE_PADDING - mod(width * BYTES_PER_PIXEL, LINE_PADDING), LINE_PADDING);
+        this.bytesPerRow = width * BYTES_PER_PIXEL + endPadding;
+        int pixelDataSize = this.bytesPerRow * height;
+        this.pixelDataOffset = headerSize+infoHeaderSize;
+        this.data = new byte[headerSize+infoHeaderSize+pixelDataSize];
+
+        buildHeader(this.data, headerSize+infoHeaderSize);
+        buildInfoHeader(this.data, width, height);
+
+        this.width = width;
+        this.height = height;
+        this.size = this.data.length;
+        this.bpp = 24;
+
+    }
+
     public void removeColor() {
         for (int i = pixelDataOffset; i < data.length; i++) {
             data[i] = 0;
@@ -185,7 +185,5 @@ public class Bitmap {
             bytes[i] = temp;
         }
     }
-
-
 
 }
