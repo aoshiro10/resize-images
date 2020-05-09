@@ -14,7 +14,9 @@ public class ImageResize {
 
         Bitmap bitmap = new Bitmap(bmpBytes.toByteArray());
 
-        Bitmap tempBitmap = Bitmap.emptyBitmap(100, 100);
+        Bitmap tempBitmap = bitmap.resize((int) (bitmap.width*.5), (int) (bitmap.height*1.5));
+
+
 
 
 //        for (int i = 0; i < 54; i++) {
@@ -34,7 +36,7 @@ public class ImageResize {
         ImageIO.write(bImageFromConvert, "JPG", new File(
                 "test1.jpg"));
         System.out.println("saved");
-        
+
 
     }
 }

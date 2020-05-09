@@ -34,6 +34,37 @@ public class Bitmap {
         return new Bitmap(data);
     }
 
+
+
+
+    public Bitmap resize(int newWidth, int newHeight) {
+
+        Bitmap tempBitmap = Bitmap.emptyBitmap(newWidth, this.height);
+        float dWidth = ((float) this.width)/newWidth;
+
+        for (int row = 0; row < this.height; row++) {
+            for (int col = 0; col < newWidth; col++) {
+                int oCol = Math.round(dWidth*col);
+                Pixel pixel = this.getPixel(row, oCol);
+                tempBitmap.setPixel(pixel, row, col);
+            }
+        }
+
+        Bitmap finalBitmap = Bitmap.emptyBitmap(newWidth, newHeight);
+
+        float dHeight = ((float) this.height)/newHeight;
+
+        for (int row = 0; row < newHeight; row++) {
+            for (int col = 0; col < newWidth; col++) {
+                int oRow = Math.round(dHeight*row);
+                Pixel pixel = tempBitmap.getPixel(oRow, col);
+                finalBitmap.setPixel(pixel, row, col);
+            }
+        }
+
+        return finalBitmap;
+    }
+
     private static byte[] intToBytes(int v) {
         return ByteBuffer.allocate(4).putInt(v).array();
     }
@@ -88,7 +119,6 @@ public class Bitmap {
         int endPadding = mod(LINE_PADDING - mod(width * BYTES_PER_PIXEL, LINE_PADDING), LINE_PADDING);
         this.bytesPerRow = width * BYTES_PER_PIXEL + endPadding;
 
-        System.out.println("Data size: " + ((this.data.length - this.pixelDataOffset)/(width+endPadding)));
     }
 
     public void removeColor() {
@@ -124,8 +154,6 @@ public class Bitmap {
 
     public void setPixel(Pixel pixel, int row, int col) {
         int index = getPixelIndex(row, col);
-
-        System.out.println("index: " + index);
 
         this.data[index] = pixel.blue;
         this.data[index + 1] = pixel.green;
