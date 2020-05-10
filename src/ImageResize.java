@@ -6,7 +6,11 @@ import java.util.Arrays;
 public class ImageResize {
     public static void main(String[] args) throws IOException {
 
-        File inPath = new File("test.jpg");
+        File inPath = new File(args[0]);
+        File outPath = new File(args[1]);
+
+        int width = Integer.parseInt(args[2]);
+        int height = Integer.parseInt(args[3]);
 
         BufferedImage jpgImage = ImageIO.read(inPath);
         ByteArrayOutputStream bmpBytes = new ByteArrayOutputStream();
@@ -14,29 +18,9 @@ public class ImageResize {
 
         Bitmap bitmap = new Bitmap(bmpBytes.toByteArray());
 
-        Bitmap tempBitmap = bitmap.resize((int) (bitmap.width*.5), (int) (bitmap.height*1.5));
-
-
-
-
-//        for (int i = 0; i < 54; i++) {
-//            System.out.println("index: " + i);
-//            System.out.println("old: " + bitmap.data[i]);
-//            System.out.println("new: " + tempBitmap.data[i]);
-//        }
-
-
-        InputStream in = new ByteArrayInputStream(tempBitmap.data);
+        InputStream in = new ByteArrayInputStream(bitmap.resize(width, height).data);
         BufferedImage bImageFromConvert = ImageIO.read(in);
-
-
-
-        //bitmap.setPixel(pixel1, 2, 3);
-
-        ImageIO.write(bImageFromConvert, "JPG", new File(
-                "test1.jpg"));
-        System.out.println("saved");
-
+        ImageIO.write(bImageFromConvert, "JPG", outPath);
 
     }
 }
